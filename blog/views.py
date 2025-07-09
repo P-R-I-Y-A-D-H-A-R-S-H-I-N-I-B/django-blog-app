@@ -1,22 +1,29 @@
 from django.shortcuts import render, redirect
-from django.http import HttpResponse
+from django.http import HttpResponse, Http404
 from django.urls import reverse
 import logging
+from blog.models import Post
 
-posts = [
-        {'id': 1, 'title': 'Post 1', 'content': 'This is the content of post 1', 'category': 'Sports'},
-        {'id': 2,   'title': 'Post 2', 'content': 'This is the content of post 2', 'category': 'Technology'},
-        {'id': 3, 'title': 'Post 3', 'content': 'This is the content of post 3', 'category': 'Science'}
-    ]
+#this is static data
+# posts = [
+#         {'id': 1, 'title': 'Post 1', 'content': 'This is the content of post 1', 'category': 'Sports'},
+#         {'id': 2,   'title': 'Post 2', 'content': 'This is the content of post 2', 'category': 'Technology'},
+#         {'id': 3, 'title': 'Post 3', 'content': 'This is the content of post 3', 'category': 'Science'}
+#     ]
 
 # Create your views here.
 def index(request):
     blogs_title = 'Latest Posts'
     page_title = 'Blog'
+    posts = Post.objects.all()
     return render(request, "blog/index.html", {'blogs_title': blogs_title, 'page_title': page_title, 'posts': posts})
 
-def detail(request, post_id):
-    post = next((item for item in posts if item['id'] == post_id), None)
+def detail(request, slug: str):
+    try:
+        post = Post.objects.get(slug=slug)
+    except Post.DoesNotExist:
+        raise Http404("Post not found")
+    
     page_title = 'Blog Post'
     logger = logging.getLogger('TESTING')
     logger.debug(f'post value: {post}')
