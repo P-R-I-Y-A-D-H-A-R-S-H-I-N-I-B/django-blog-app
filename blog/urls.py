@@ -9,6 +9,7 @@ urlpatterns = [
     path("", views.index, name="index"), #name is used to refer to the url in the template
     path("post/<str:slug>", views.detail, name="detail"),
     path("old_url", views.old_url_redirect, name="old_url"),
-    path("new_url", views.new_url, name="new_page_url") #new_url is the function name in views.py
+    path("new_url", views.new_url, name="new_page_url"), #new_url is the function name in views.py
+    path("contact", views.contact, name="contact")
 ]
 

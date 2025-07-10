@@ -3,6 +3,9 @@ from django.http import HttpResponse, Http404
 from django.urls import reverse
 import logging
 from blog.models import Post
+from django.core.paginator import Paginator
+from blog.forms import ContactForm
+from django.core.mail import send_mail
 
 #this is static data
 # posts = [
@@ -15,8 +18,13 @@ from blog.models import Post
 def index(request):
     blogs_title = 'Latest Posts'
     page_title = 'Blog'
-    posts = Post.objects.all()
-    return render(request, "blog/index.html", {'blogs_title': blogs_title, 'page_title': page_title, 'posts': posts})
+
+    all_posts = Post.objects.all()
+    paginator = Paginator(all_posts, 6)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    
+    return render(request, "blog/index.html", {'blogs_title': blogs_title, 'page_title': page_title, 'post_obj': page_obj})
 
 def detail(request, slug: str):
     try:
@@ -35,3 +43,26 @@ def old_url_redirect(request):
 
 def new_url(request):
     return HttpResponse("This is the new url redirect page")
+
+def contact(request):
+    if request.method == 'POST':
+        form = ContactForm(request.POST)
+        name = request.POST.get('name')
+        email = request.POST.get('email')
+        message = request.POST.get('message')
+        if form.is_valid():
+            success_message = 'Your message has been sent successfully'
+            #write code to send email
+            # send_mail(
+            #     'New message from your blog',
+            #     f'Name: {name}\nEmail: {email}\nMessage: {message}',
+            #     email,
+            #     [email],
+            # )
+            return render(request, "blog/contact.html", {'page_title': 'Contact', 'form': form, 'success_message': success_message})
+        else:
+            logger = logging.getLogger('TESTING')
+            logger.debug(f'Form is not valid: {form.errors}')
+        return render(request, "blog/contact.html", {'page_title': 'Contact', 'form': form, 'name': name, 'email': email, 'message': message})
+            # return HttpResponse(f'Name: {name}, Email: {email}, Message: {message}')
+    return render(request, "blog/contact.html", {'page_title': 'Contact'})
