@@ -1,7 +1,7 @@
 from typing import Any
-from blog.models import Post
+from blog.models import Post, Category
 from django.core.management.base import BaseCommand
-
+import random
 
 class Command(BaseCommand):
     help = "Populate the database with sample data"
@@ -79,8 +79,12 @@ class Command(BaseCommand):
             "https://picsum.photos/id/20/800/400",
         ]
 
+        categories = Category.objects.all()
+        print(categories)
+
         for title, content, image_url in zip(titles, contents, image_urls):
-            Post.objects.create(title=title, content=content, image_url=image_url)
+            category = random.choice(categories)
+            Post.objects.create(title=title, content=content, image_url=image_url, category=category)
         self.stdout.write(self.style.SUCCESS("Database populated successfully"))
         return "Database populated successfully"
         

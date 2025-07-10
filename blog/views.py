@@ -25,9 +25,10 @@ def detail(request, slug: str):
         raise Http404("Post not found")
     
     page_title = 'Blog Post'
+    related_posts = Post.objects.filter(category=post.category).exclude(id=post.id)
     logger = logging.getLogger('TESTING')
     logger.debug(f'post value: {post}')
-    return render(request, "blog/detail.html", {'page_title': page_title,'post': post})
+    return render(request, "blog/detail.html", {'page_title': page_title,'post': post, 'related_posts': related_posts})
 
 def old_url_redirect(request):
     return redirect(reverse("blog:new_page_url"))
