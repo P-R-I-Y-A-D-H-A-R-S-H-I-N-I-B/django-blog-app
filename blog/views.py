@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.http import HttpResponse, Http404
 from django.urls import reverse
 import logging
-from blog.models import Post
+from blog.models import Post, AboutUs
 from django.core.paginator import Paginator
 from blog.forms import ContactForm
 from django.core.mail import send_mail
@@ -66,3 +66,7 @@ def contact(request):
         return render(request, "blog/contact.html", {'page_title': 'Contact', 'form': form, 'name': name, 'email': email, 'message': message})
             # return HttpResponse(f'Name: {name}, Email: {email}, Message: {message}')
     return render(request, "blog/contact.html", {'page_title': 'Contact'})
+
+def about(request):
+    about_us_content = AboutUs.objects.first().content
+    return render(request, "blog/about.html", {'page_title': 'About', 'about_us_content': about_us_content})

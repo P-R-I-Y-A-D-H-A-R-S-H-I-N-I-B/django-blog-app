@@ -22,5 +22,5 @@ handler500 = 'myapp.views.custom_error_view'
 handler400 = 'myapp.views.custom_bad_request_view'
 urlpatterns = [
     path('admin/', admin.site.urls),
-    path('blog/', include("blog.urls"))
+    path('', include("blog.urls"))
 ]
